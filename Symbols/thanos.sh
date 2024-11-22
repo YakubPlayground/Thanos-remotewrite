@@ -26,3 +26,5 @@ helm install alertmanager bitnami/alertmanager --namespace $NAMESPACE
 
 # Create Remote-Write Service for Thanos and Prometheus
 helm install thanos-remote-write bitnami/thanos --namespace $NAMESPACE --set component=sidecar
+
+kubectl get pods -n monitoring --watch

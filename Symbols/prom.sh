@@ -8,4 +8,4 @@ helm repo update
 # Install Prometheus
 helm install prometheus bitnami/prometheus --namespace monitoring
 
-kubectl get pods -n monitoring
+kubectl get pods -n monitoring --watch
