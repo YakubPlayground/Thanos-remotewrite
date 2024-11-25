@@ -4,15 +4,17 @@ set -e
 NAMESPACE="monitoring"
 
 echo "Fetching services in namespace: $NAMESPACE"
-SERVICES=$(kubectl get svc -n $NAMESPACE -o jsonpath='{range .items[*]}{.metadata.name}{" "}{range .spec.ports[*]}{.port}{" "}{.nodePort}{" "}{end}{"\n"}{end}')
+SERVICES=$(kubectl get svc -n monitoring -o jsonpath='{range .items[*]}{.metadata.name}{" "}{range .spec.ports[*]}{.port}{" "}{.nodePort}{" "}{end}{"\n"}{end}')
 echo "Services fetched: $SERVICES"
+echo ""
 
 for SERVICE in $SERVICES; do
     (
         SERVICE_NAME=$(echo $SERVICE | awk '{print $1}')
-        PORTS=$(echo $SERVICE | awk '{$1=""; print $0}')
+        PORTS=$(echo $SERVICE | awk '{$1=""; print substr($0,2)}')
         
         echo "Processing service: $SERVICE_NAME"
+        echo ""
         
         while read -r TARGET_PORT NODE_PORT; do
             echo "Target port: $TARGET_PORT"
@@ -25,16 +27,20 @@ for SERVICE in $SERVICES; do
                     echo "Error occurred while port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
                     exit 1
                 fi
+                echo "Port forwarding started for $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
             else
                 echo "No node port found for target port $TARGET_PORT of service $SERVICE_NAME, skipping port forwarding"
             fi
+            echo ""
         done <<< "$PORTS"
+        echo ""
     ) &
 done
 
 echo "Waiting for all port-forwarding processes to complete"
 wait
 echo "All port-forwarding processes completed"
+echo ""
 
 echo "Listing all tmux sessions:"
 tmux list-sessions
