@@ -1,0 +1,339 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  ports:
+    - name: http
+      port: 9093
+      targetPort: 9093
+      protocol: TCP
+  selector:
+    app: alertmanager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-alertmanager
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-prometheus-alertmanager
+      port: 8080
+      targetPort: 9093
+      protocol: TCP
+  selector:
+    app: prometheus-alertmanager
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-server
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-prometheus-server
+      port: 8081
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: prometheus-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-frontend-query
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-frontend-query
+      port: 8082
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-frontend-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-frontend-query-frontend
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-frontend-query-frontend
+      port: 8083
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-frontend-query-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-frontend-query-grpc
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-frontend-query-grpc
+      port: 8084
+      targetPort: 10901
+      protocol: TCP
+  selector:
+    app: thanos-frontend-query-grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-query
+      port: 8085
+      targetPort: 10901
+      protocol: TCP
+    - name: http-thanos-query
+      port: 8086
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query-frontend
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-query-frontend
+      port: 8087
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-query-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query-grpc
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-query-grpc
+      port: 8088
+      targetPort: 10901
+      protocol: TCP
+  selector:
+    app: thanos-query-grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query-query
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-query-query
+      port: 8089
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-query-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query-query-frontend
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-query-query-frontend
+      port: 8090
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-query-query-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query-query-grpc
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-query-query-grpc
+      port: 8091
+      targetPort: 10901
+      protocol: TCP
+  selector:
+    app: thanos-query-query-grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-receiver
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-receiver
+      port: 8092
+      targetPort: 10902
+      protocol: TCP
+  selector:
+    app: thanos-receiver
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-receiver-query
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-receiver-query
+      port: 8093
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-receiver-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-receiver-query-frontend
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-receiver-query-frontend
+      port: 8094
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-receiver-query-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-receiver-query-grpc
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-receiver-query-grpc
+      port: 8095
+      targetPort: 10901
+      protocol: TCP
+  selector:
+    app: thanos-receiver-query-grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-remote-write
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-remote-write
+      port: 8096
+      targetPort: 10904
+      protocol: TCP
+  selector:
+    app: thanos-remote-write
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-remote-write-query
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-remote-write-query
+      port: 8097
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-remote-write-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-remote-write-query-frontend
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-remote-write-query-frontend
+      port: 8098
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-remote-write-query-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-remote-write-query-grpc
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-remote-write-query-grpc
+      port: 8099
+      targetPort: 10901
+      protocol: TCP
+  selector:
+    app: thanos-remote-write-query-grpc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-storage-gateway
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-storage-gateway
+      port: 8100
+      targetPort: 10903
+      protocol: TCP
+  selector:
+    app: thanos-storage-gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-storage-gateway-query
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-storage-gateway-query
+      port: 8101
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-storage-gateway-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-storage-gateway-query-frontend
+  namespace: monitoring
+spec:
+  ports:
+    - name: http-thanos-storage-gateway-query-frontend
+      port: 8102
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: thanos-storage-gateway-query-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-storage-gateway-query-grpc
+  namespace: monitoring
+spec:
+  ports:
+    - name: grpc-thanos-storage-gateway-query-grpc
+      port: 8103
+      targetPort: 10901
+      protocol: TCP
+  selector:
+    app: thanos-storage-gateway-query-grpc
