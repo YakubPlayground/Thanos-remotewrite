@@ -4,14 +4,14 @@ set -e
 NAMESPACE="monitoring"
 
 echo "Fetching services in namespace: $NAMESPACE"
-SERVICES=$(kubectl get svc -n monitoring -o jsonpath='{range .items[*]}{.metadata.name}{" "}{range .spec.ports[*]}{.port}{" "}{.nodePort}{" "}{end}{"\n"}{end}')
+SERVICES=$(kubectl get svc -n monitoring -o jsonpath='{range .items[*]}{.metadata.name}{" "}{range .spec.ports[*]}{.port}{" "}{.nodePort}{" "}{end}{"\n"}{end}' | grep -v '  ')
 echo "Services fetched: $SERVICES"
 echo ""
 
 for SERVICE in $SERVICES; do
     (
         SERVICE_NAME=$(echo $SERVICE | awk '{print $1}')
-        PORTS=$(echo $SERVICE | awk '{$1=""; print substr($0,2)}')
+        PORTS=$(echo $SERVICE | awk '{for (i=2; i<=NF; i+=2) print $i, $(i+1)}')
         
         echo "Processing service: $SERVICE_NAME"
         echo ""
