@@ -35,7 +35,7 @@ for SERVICE_NAME in $SERVICES; do
             if [ -n "$NODE_PORT" ]; then
                 SESSION_NAME="${SERVICE_NAME}_${PORT}_${NODE_PORT}"
                 echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT in tmux session $SESSION_NAME"
-                if ! tmux new-session -d -s "$SESSION_NAME" "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE"; then
+                if ! tmux new-session -d -s "$SESSION_NAME" "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE; sleep 3600"; then
                     echo "Error occurred while port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
                     exit 1
                 fi
