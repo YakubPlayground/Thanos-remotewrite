@@ -19,8 +19,9 @@ for SERVICE in $SERVICES; do
             echo "Node port: $NODE_PORT"
             
             if [ -n "$NODE_PORT" ]; then
-                echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
-                if ! gnome-terminal -- bash -c "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE; exec bash"; then
+                SESSION_NAME="${SERVICE_NAME}_${TARGET_PORT}_${NODE_PORT}"
+                echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT in tmux session $SESSION_NAME"
+                if ! tmux new-session -d -s "$SESSION_NAME" "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE"; then
                     echo "Error occurred while port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
                     exit 1
                 fi
@@ -34,3 +35,6 @@ done
 echo "Waiting for all port-forwarding processes to complete"
 wait
 echo "All port-forwarding processes completed"
+
+echo "Listing all tmux sessions:"
+tmux list-sessions
