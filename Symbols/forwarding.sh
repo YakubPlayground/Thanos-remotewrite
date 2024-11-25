@@ -18,7 +18,7 @@ for SERVICE in $SERVICES; do
             
             if [ -n "$NODE_PORT" ]; then
                 echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
-                kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE &
+                gnome-terminal -- bash -c "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE; exec bash"
             else
                 echo "No node port found for target port $TARGET_PORT of service $SERVICE_NAME, skipping port forwarding"
             fi
