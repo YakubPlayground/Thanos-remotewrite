@@ -3,25 +3,37 @@ set -e
 
 NAMESPACE="monitoring"
 
+usage() {
+    echo "Usage: $0 -n <namespace>"
+    exit 1
+}
+
+while getopts "n:" opt; do
+    case $opt in
+        n) NAMESPACE=$OPTARG ;;
+        *) usage ;;
+    esac
+done
+
 echo "Fetching services in namespace: $NAMESPACE"
-SERVICES=$(kubectl get svc -n monitoring -o jsonpath='{range .items[*]}{.metadata.name}{" "}{range .spec.ports[*]}{.port}{" "}{.nodePort}{" "}{end}{"\n"}{end}' | grep -v '  ')
+SERVICES=$(kubectl get svc -n $NAMESPACE -o jsonpath='{.items[*].metadata.name}')
 echo "Services fetched: $SERVICES"
 echo ""
 
-for SERVICE in $SERVICES; do
+for SERVICE_NAME in $SERVICES; do
     (
-        SERVICE_NAME=$(echo $SERVICE | awk '{print $1}')
-        PORTS=$(echo $SERVICE | awk '{for (i=2; i<=NF; i+=2) print $i, $(i+1)}')
-        
         echo "Processing service: $SERVICE_NAME"
         echo ""
         
-        while read -r TARGET_PORT NODE_PORT; do
-            echo "Target port: $TARGET_PORT"
+        PORTS=$(kubectl get svc $SERVICE_NAME -n $NAMESPACE -o jsonpath='{range .spec.ports[*]}{.port}{" "}{.nodePort}{" "}{.targetPort}{"\n"}{end}')
+        
+        while read -r PORT NODE_PORT TARGET_PORT; do
+            echo "Port: $PORT"
             echo "Node port: $NODE_PORT"
+            echo "Target port: $TARGET_PORT"
             
             if [ -n "$NODE_PORT" ]; then
-                SESSION_NAME="${SERVICE_NAME}_${TARGET_PORT}_${NODE_PORT}"
+                SESSION_NAME="${SERVICE_NAME}_${PORT}_${NODE_PORT}"
                 echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT in tmux session $SESSION_NAME"
                 if ! tmux new-session -d -s "$SESSION_NAME" "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE"; then
                     echo "Error occurred while port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
@@ -29,7 +41,7 @@ for SERVICE in $SERVICES; do
                 fi
                 echo "Port forwarding started for $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
             else
-                echo "No node port found for target port $TARGET_PORT of service $SERVICE_NAME, skipping port forwarding"
+                echo "No node port found for port $PORT of service $SERVICE_NAME, skipping port forwarding"
             fi
             echo ""
         done <<< "$PORTS"
