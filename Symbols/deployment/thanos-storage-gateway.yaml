@@ -19,13 +19,18 @@ spec:
         args:
           - store
           - "--objstore.config-file=/etc/config/s3-config.yaml"
+          - "--data-dir=/data"  # Set the data directory to use the mounted volume
         volumeMounts:
           - name: config-volume
             mountPath: /etc/config
+          - name: data-volume
+            mountPath: /data  # Mount the writable volume here
       volumes:
-        - name: config-volume
-          configMap:
-            name: s3-config
+      - name: config-volume
+        configMap:
+          name: s3-config
+      - name: data-volume
+        emptyDir: {}  # Temporary writable directory for testing
 ---
 apiVersion: v1
 kind: Service
