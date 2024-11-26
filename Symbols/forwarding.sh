@@ -20,6 +20,23 @@ SERVICES=$(kubectl get svc -n $NAMESPACE -o jsonpath='{.items[*].metadata.name}'
 echo "Services fetched: $SERVICES"
 echo ""
 
+declare -A PORT_MAPPING=(
+    ["prometheus-alertmanager"]="9093"
+    ["prometheus-server"]="9090"
+    ["thanos-frontend-query"]="10902 10901"
+    ["thanos-frontend-query-frontend"]="9090"
+    ["thanos-query"]="10902 10901"
+    ["thanos-query-frontend"]="9090"
+    ["thanos-query-query"]="10902 10901"
+    ["thanos-query-query-frontend"]="9090"
+    ["thanos-receiver-query"]="10902 10901"
+    ["thanos-receiver-query-frontend"]="9090"
+    ["thanos-remote-write-query"]="10902 10901"
+    ["thanos-remote-write-query-frontend"]="9090"
+    ["thanos-storage-gateway-query"]="10902 10901"
+    ["thanos-storage-gateway-query-frontend"]="9090"
+)
+
 for SERVICE_NAME in $SERVICES; do
     (
         echo "Processing service: $SERVICE_NAME"
@@ -34,12 +51,13 @@ for SERVICE_NAME in $SERVICES; do
             
             if [ -n "$NODE_PORT" ]; then
                 SESSION_NAME="${SERVICE_NAME}_${PORT}_${NODE_PORT}"
-                echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT in tmux session $SESSION_NAME"
-                if ! tmux new-session -d -s "$SESSION_NAME" "kubectl port-forward svc/$SERVICE_NAME $NODE_PORT:$TARGET_PORT -n $NAMESPACE; sleep 3600"; then
+                LOCAL_PORT=${PORT_MAPPING[$SERVICE_NAME]}
+                echo "Port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT in tmux session $SESSION_NAME using local port $LOCAL_PORT"
+                if ! tmux new-session -d -s "$SESSION_NAME" "kubectl port-forward svc/$SERVICE_NAME $LOCAL_PORT:$TARGET_PORT -n $NAMESPACE; sleep 3600"; then
                     echo "Error occurred while port forwarding $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
                     exit 1
                 fi
-                echo "Port forwarding started for $SERVICE_NAME from $NODE_PORT to $TARGET_PORT"
+                echo "Port forwarding started for $SERVICE_NAME from $NODE_PORT to $TARGET_PORT using local port $LOCAL_PORT"
             else
                 echo "No node port found for port $PORT of service $SERVICE_NAME, skipping port forwarding"
             fi

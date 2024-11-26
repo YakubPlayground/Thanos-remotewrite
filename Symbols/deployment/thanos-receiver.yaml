@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-receiver
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-receiver
+  template:
+    metadata:
+      labels:
+        app: thanos-receiver
+    spec:
+      containers:
+      - name: thanos-receiver
+        image: bitnami/thanos:latest
+        args:
+          - "receive"
+          - "--http-address=0.0.0.0:8080"
+          - "--grpc-address=0.0.0.0:10901"
+          - "--label=receive_replica=\"1\""
+          - "--label=receive_cluster=\"monitoring-cluster\""
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: grpc
+          containerPort: 10901
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+      volumes:
+      - name: data-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-receiver
+  namespace: monitoring
+spec:
+  selector:
+    app: thanos-receiver
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+  type: NodePort

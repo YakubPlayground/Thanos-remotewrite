@@ -95,3 +95,21 @@ Handling connection for 9908
 
 
 @YakubPlayground ➜ /workspaces/Thanos-remotewrite/Symbols (master) $ kubectl get pods -n <namespace> | grep -E 'thanos|prometheus'
+
+
+```bash
+kubectl logs prometheus-alertmanager-0 -n monitoring | grep -i "listening"
+kubectl logs prometheus-server-8475dcbb69-jn2hb -n monitoring | grep -i "listening"
+kubectl logs thanos-frontend-query-867cb577dc-5c8vn -n monitoring | grep -i "listening"
+kubectl logs thanos-frontend-query-frontend-859f4f97bf-pzw8n -n monitoring | grep -i "listening"
+kubectl logs thanos-query-7b9c7974c4-42bk7 -n monitoring | grep -i "listening"
+kubectl logs thanos-query-frontend-857bb4d5fb-5694f -n monitoring | grep -i "listening"
+kubectl logs thanos-query-query-74dfd4d4cc-8xd9h -n monitoring | grep -i "listening"
+kubectl logs thanos-query-query-frontend-dfb9ff5b9-sj9wx -n monitoring | grep -i "listening"
+kubectl logs thanos-receiver-query-56f75d9484-8nf8c -n monitoring | grep -i "listening"
+kubectl logs thanos-receiver-query-frontend-58f9c59876-jkrlj -n monitoring | grep -i "listening"
+kubectl logs thanos-remote-write-query-7797989d75-djff8 -n monitoring | grep -i "listening"
+kubectl logs thanos-remote-write-query-frontend-c4fcf8fcc-5wk86 -n monitoring | grep -i "listening"
+kubectl logs thanos-storage-gateway-query-86bb874c79-h82vd -n monitoring | grep -i "listening"
+kubectl logs thanos-storage-gateway-query-frontend-565bd45799-l7x57 -n monitoring | grep -i "listening"
+```
